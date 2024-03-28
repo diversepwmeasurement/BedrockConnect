@@ -1,26 +1,30 @@
-name: buildroot
-
-on: [push, pull_request]
-
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 11
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
-        distribution: 'adopt'
         cache: maven
-    - name: Build with maven
-      run: |
-        cd serverlist-server
+        distribution: adopt
+        java-version: '11'
+    - continue-on-error: true
+      name: Build with maven
+      run: 'cd serverlist-server
+
         mvn -B package --file pom.xml
-    - name: Upload artifact
+
+        '
+    - continue-on-error: true
+      name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: build-artifact
         path: ./serverlist-server/target/BedrockConnect-1.0-SNAPSHOT.jar
+name: buildroot
+on:
+  repository_dispatch:
+    types: trigger-ga___ci.yml
